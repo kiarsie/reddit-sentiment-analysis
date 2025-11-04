@@ -10,8 +10,13 @@ def simple_cache(ttl_seconds: int = 120):
     def decorator(fn):
         @wraps(fn)
         async def wrapper(*args, **kwargs):
-            key = (fn.__name__, str(args), str(kwargs))
+            # Create a more explicit cache key that includes all relevant parameters
+            # Sort kwargs to ensure consistent key generation
+            sorted_kwargs = tuple(sorted(kwargs.items())) if kwargs else ()
+            key = (fn.__name__, args, sorted_kwargs)
             if key in cache:
+                import logging
+                logging.info(f"Cache hit for {fn.__name__} with key: {key}")
                 return cache[key]
             res = await fn(*args, **kwargs)
             cache[key] = res
