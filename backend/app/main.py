@@ -9,6 +9,7 @@ from app.utils import simple_cache
 import uvicorn
 import asyncio
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -167,4 +168,5 @@ async def analyze(
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
 
 if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=8080, reload=True)
+    port = int(os.environ.get("PORT", 8080))  # fallback to 8080 for local dev
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=True)
